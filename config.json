@@ -1,0 +1,13 @@
+{
+	"file_size": 1048576,
+	"num_init_peer": 1,
+	"num_peer": 1,
+	"packet_loss_rate": null,
+	"corruption_rate": null,
+	"sender": null,
+	"nodes": {
+		"aws": "54.248.144.148",
+		"p2plab": "137.189.97.35"
+	},
+	"ext_port": 39951
+}
