@@ -4,17 +4,19 @@ from parser import *
 from json import load, loads
 
 print args
+
+# read configuration file
 try:
-	cfile = load(args.configfile)
+	config = load(args.configfile)
 except:
 	print 'Incorrect config file'
 	exit()
 
-# read configuration file
-
 # write sender_config.json
+sender = {
+	'ip': config.nodes['p2plab'],
+	'asid': config.asid,
+	'ext_port': config.ext_port
+}
 
 # write peer_config.json
-
-
-
