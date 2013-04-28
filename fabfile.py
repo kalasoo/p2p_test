@@ -2,6 +2,7 @@ from fabric.api import *
 from json import loads
 from config import *
 
+@task
 def p2p_test(t = 'nep2p', cf = 'config.json', d = False, l = False):
 	# check input
 	print 'Check input ...'
@@ -32,15 +33,18 @@ def p2p_test(t = 'nep2p', cf = 'config.json', d = False, l = False):
 	# sender & peers
 	sender = config['nodes'].pop(config['sender'])
 	peers = [v for v in config['nodes'].values()][:config['num_peer']]
-	# roles
-	env.roledef = {
-		'sender': sender[0],
-		'peers': [p[0] for p in peers]
-	}
-	print env.roledef
 	print 'Roles are deployed\n'
 
+	# config sender
+	print 'Setup sender...'
+	if not setup_sender(config['sender']):
+		print 'Sender setup failed'
+		return
+	print 'Setup sender done\n'
 
+def setup_sender(sender):
+	resolve_env(env, sender)
+	return True
 
 def check_config(config):
 	if config['file_size'] not in FILE_SIZE:
