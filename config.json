@@ -1,5 +1,5 @@
 {
-	"file_size": 1048576,
+	"file_size": "1M",
 	"num_init_peer": 1,
 	"num_peer": 1,
 	"packet_loss_rate": null,
