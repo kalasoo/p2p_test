@@ -2,8 +2,32 @@ from fabric.api import *
 from json import loads
 from config import *
 
+# global variables
+sender = None
+peers = None
+env.roledefs = {
+	'sender': [],
+	'peers': []
+}
+
 @task
-def p2p_test(t = 'nep2p', cf = 'config.json', d = False, l = False):
+def run_sender():
+	execute(setup_sender, role="sender")
+
+def setup_sender():
+	run('hostname')
+
+@task
+def run_peers():
+	env.parallel = True
+	execute(setup_peers, role="peers")
+
+def setup_peers():
+	run('hostname')
+
+@task
+def setup_config(t = 'nep2p', cf = 'config.json', d = False, l = False):
+	global sender, peers
 	# check input
 	print 'Check input ...'
 	if t not in P2P_SYS:
@@ -31,20 +55,36 @@ def p2p_test(t = 'nep2p', cf = 'config.json', d = False, l = False):
 	# setup roles
 	print 'Setup roles...'
 	# sender & peers
-	sender = config['nodes'].pop(config['sender'])
-	peers = [v for v in config['nodes'].values()][:config['num_peer']]
+	sender = [config['sender']] + config['nodes'].pop(config['sender'])
+	peers = [[k] + v for k, v in config['nodes'].iteritems()][:config['num_peer']]
+	keys = []
+
+	# add sender to roledefs
+	res_sender = resolve(sender[0])
+	if res_sender['type'] == 'password':
+		env.passwords[res_sender['host']] = res_sender['pw']
+	elif res_sender['type'] == 'key':
+		keys.append(res_sender['key'])
+	env.roledefs['sender'].append(res_sender['host'])
+	
+	# add peers to roledefs
+	for p in peers:
+		res = resolve(p[0])
+		if res['type'] == 'password':
+			env.passwords[res['host']] = res['pw']
+		elif res['type'] == 'key' and res['key'] not in keys:
+			keys.append(res['key'])
+		env.roledefs['peers'].append(res['host'])
+	# add keys
+	env.key_filename = keys
+	print '\tsender:'
+	print '\t\t' + str(sender)
+	print '\tpeers:'
+	for p in peers:
+		print '\t\t' + str(p)
+	print '\tkey:'
+	print '\t\t' + str(env.key_filename)
 	print 'Roles are deployed\n'
-
-	# config sender
-	print 'Setup sender...'
-	if not setup_sender(config['sender']):
-		print 'Sender setup failed'
-		return
-	print 'Setup sender done\n'
-
-def setup_sender(sender):
-	resolve_env(env, sender)
-	return True
 
 def check_config(config):
 	if config['file_size'] not in FILE_SIZE:
@@ -65,3 +105,6 @@ def check_config(config):
 		print 'sender'
 		return False 
 	return True
+
+
+
