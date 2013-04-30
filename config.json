@@ -1,14 +1,16 @@
 {
-	"file_size": 1048576,
+	"file_size": "1M",
 	"num_init_peer": 1,
-	"num_peer": 1,
+	"num_peer": 5,
 	"packet_loss_rate": null,
 	"corruption_rate": null,
 	"sender": null,
 	"nodes": {
-		"aws": "54.248.144.148",
-		"p2plab": "137.189.97.35"
-	},
-	"ext_port": 39951,
-	"asid": 3000
+		"p2plab": [39951, 3000],
+		"s1": [39951, 3000],
+		"s2": [39951, 3000],
+		"s3": [39951, 3000],
+		"s4": [39951, 3000],
+		"ymaws": [39951, 3000]
+	}
 }
