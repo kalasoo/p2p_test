@@ -3,7 +3,8 @@ from json import loads
 from config import *
 from genfile import *
 
-# global variables
+# global variablesi
+config = None
 sender = None 	# [NAME, PORT, ASID, HOST]
 peers = None 	# [NAME, PORT, ASID, HOST]
 env.roledefs = {
@@ -18,6 +19,8 @@ def run_sender():
 
 def setup_sender():
 	put('genfiles/*', DEFAULT_PATH_BASE)
+	with cd(DEFAULT_PATH_BASE):
+		run('dd if=/dev/urandom of=./{0}.dat bs={1} count=1' % (config['file_size']))
 
 @task
 def run_peers():
@@ -30,7 +33,7 @@ def setup_peer():
 
 @task
 def setup_config(t = 'nep2p', cf = 'config.json', d = False, l = False):
-	global sender, peers
+	global config, sender, peers
 	# check input
 	print 'Check input ...'
 	if t not in P2P_SYS:
