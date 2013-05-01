@@ -3,7 +3,6 @@ from json import loads
 P2P_SYS = ('nep2p', 'bt', 'libswft')
 FILE_SIZE = ('1K', '10K', '100K', '1M', '10M')
 DEFAULT_SENDER = 'p2plab'
-DEFAULT_PATH_BASE = '~/fyp/fyp_nep2p/'
 
 resolver = {
 	"p2plab": {
