@@ -1,7 +1,7 @@
 {
 	"file_size": "1M",
 	"num_init_peer": 1,
-	"num_peer": 2,
+	"num_peer": 3,
 	"packet_loss_rate": null,
 	"corruption_rate": null,
 	"sender": null,
