@@ -7,9 +7,9 @@ DEFAULT_PATH_BASE = '~/fyp/fyp_nep2p/'
 
 resolver = {
 	"p2plab": {
-		"host": "yinming@137.189.97.35",
+		"host": "yingshaun@137.189.97.35",
 		"type": "password",
-		"pw": "900619YINMING"
+		"pw": "1991522"
 	},
 	"yxhaws": {
 		"host": "ubuntu@54.248.144.148",
