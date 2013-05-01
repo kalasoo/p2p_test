@@ -1,2 +1,4 @@
 {"wait_close":30,
-"asid":3000}
+"asid":3000,
+"log_file_base": "log/",
+"log_precision": 0.1}
