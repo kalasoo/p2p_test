@@ -26,7 +26,6 @@ def run_peers():
 		execute(setup_peer, host=p[3])
 
 def setup_peer():
-	run('hostname')
 	put('genfiles/*', '~/p2p_test_files/')
 
 @task
