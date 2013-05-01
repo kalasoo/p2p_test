@@ -17,7 +17,7 @@ def run_sender():
 	execute(setup_sender, role="sender")
 
 def setup_sender():
-	put('genfiles/*', '~/p2p_test_files/')
+	put('genfiles/*', DEFAULT_PATH_BASE)
 
 @task
 def run_peers():
@@ -26,7 +26,7 @@ def run_peers():
 		execute(setup_peer, host=p[3])
 
 def setup_peer():
-	put('genfiles/*', '~/p2p_test_files/')
+	put('genfiles/*', DEFAULT_PATH_BASE) 
 
 @task
 def setup_config(t = 'nep2p', cf = 'config.json', d = False, l = False):
