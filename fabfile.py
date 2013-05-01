@@ -1,10 +1,11 @@
 from fabric.api import *
 from json import loads
 from config import *
+from genfile import *
 
 # global variables
-sender = None
-peers = None
+sender = None 	# [NAME, PORT, ASID, HOST]
+peers = None 	# [NAME, PORT, ASID, HOST]
 env.roledefs = {
 	'sender': [],
 	'peers': []
@@ -12,18 +13,21 @@ env.roledefs = {
 
 @task
 def run_sender():
+	gen_nep2p_files([(x[3].split('@')[1], x[2]) for x in peers], sender[1], sender[2])
 	execute(setup_sender, role="sender")
 
 def setup_sender():
-	run('hostname')
+	put('genfiles/*', '~/p2p_test_files/')
 
 @task
 def run_peers():
-	env.parallel = True
-	execute(setup_peers, role="peers")
+	for p in peers:
+		gen_nep2p_files([], p[1], p[2])
+		execute(setup_peer, host=p[3])
 
-def setup_peers():
+def setup_peer():
 	run('hostname')
+	put('genfiles/*', '~/p2p_test_files/')
 
 @task
 def setup_config(t = 'nep2p', cf = 'config.json', d = False, l = False):
@@ -61,6 +65,7 @@ def setup_config(t = 'nep2p', cf = 'config.json', d = False, l = False):
 
 	# add sender to roledefs
 	res_sender = resolve(sender[0])
+	sender.append(res_sender['host'])
 	if res_sender['type'] == 'password':
 		env.passwords[res_sender['host']] = res_sender['pw']
 	elif res_sender['type'] == 'key':
@@ -70,6 +75,7 @@ def setup_config(t = 'nep2p', cf = 'config.json', d = False, l = False):
 	# add peers to roledefs
 	for p in peers:
 		res = resolve(p[0])
+		p.append(res['host'])
 		if res['type'] == 'password':
 			env.passwords[res['host']] = res['pw']
 		elif res['type'] == 'key' and res['key'] not in keys:
@@ -105,6 +111,5 @@ def check_config(config):
 		print 'sender'
 		return False 
 	return True
-
 
 

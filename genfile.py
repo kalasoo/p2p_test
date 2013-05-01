@@ -2,8 +2,8 @@ from json import dumps, loads
 
 def gen_nep2p_files(nodes, port, asid):
 	gen_nodes(nodes)
-	gen_port(port)
-	gen_asid(asid)
+	gen_nep2p(port)
+	gen_config(asid)
 
 def gen_nodes(nodes): # n in nodes == [IP, ASID]
 	d = {}
@@ -11,7 +11,7 @@ def gen_nodes(nodes): # n in nodes == [IP, ASID]
 		d[n[0]] = n[1]
 	json = dumps(d)
 	# write to nodes.json
-	f = open('nodes.json', 'w')
+	f = open('genfiles/nodes.json', 'w')
 	f.write(json)
 	f.close()
 
@@ -22,7 +22,7 @@ def gen_nep2p(port):
 	json = dumps(d)
 	f.close()
 	# write to nep2p.json
-	f = open('nep2p.json', 'w')
+	f = open('genfiles/nep2p.json', 'w')
 	f.write(json)
 	f.close()
 
@@ -33,6 +33,6 @@ def gen_config(asid):
 	json = dumps(d)
 	f.close()
 	# write to config.json
-	f = open('config.json', 'w')
+	f = open('genfiles/config.json', 'w')
 	f.write(json)
 	f.close()
