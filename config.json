@@ -1,5 +1,5 @@
 {
-	"file_size": "1M",
+	"file_size": "10M",
 	"num_init_peer": 1,
 	"num_peer": 3,
 	"packet_loss_rate": null,
@@ -7,8 +7,8 @@
 	"sender": null,
 	"nodes": {
 		"p2plab": [39951, 3000],
-		"yxhaws": [39951, 3000],
 		"s1": [39951, 3000],
+		"s3": [39951, 3000],
 		"s9": [39951, 3000]
 	}
 }
