@@ -11,7 +11,7 @@
 "congestion_threshold": 0.2,
 "congestion_minrate": 1,
 "congestion_debug": false,
-"congestion_printack": true,
+"congestion_printack": false,
 "congestion_filter": false,
 "congestion_adjust": false,
 "congestion_zeros": false,
