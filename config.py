@@ -3,7 +3,6 @@ from json import loads
 P2P_SYS = ('nep2p', 'bt', 'libswft')
 FILE_SIZE = ('1K', '10K', '100K', '1M', '10M')
 DEFAULT_SENDER = 'p2plab'
-RESOLVE_FILE = 'resolve.json'
 
 resolver = {
 	"p2plab": {
