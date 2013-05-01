@@ -20,7 +20,7 @@ def run_sender():
 def setup_sender():
 	put('genfiles/*', DEFAULT_PATH_BASE)
 	with cd(DEFAULT_PATH_BASE):
-		run('dd if=/dev/urandom of=./{0}.dat bs={1} count=1' % (config['file_size']))
+		run('dd if=/dev/urandom of=./{0}.dat bs={1} count=1'.format(config['file_size'], config['file_size']))
 
 @task
 def run_peers():
