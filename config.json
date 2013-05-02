@@ -1,15 +1,13 @@
 {
-	"log_file": "",
-	"file_size": "10M",
+	"log_file": "hehe/",
+	"file_size": "1M",
 	"num_init_peer": 1,
-	"num_peer": 3,
+	"num_peer": 1,
 	"packet_loss_rate": null,
 	"corruption_rate": null,
 	"sender": null,
 	"nodes": {
 		"p2plab": [39951, 3000],
-		"s1": [39951, 3000],
-		"s3": [39951, 3000],
 		"s9": [39951, 3000]
 	}
 }

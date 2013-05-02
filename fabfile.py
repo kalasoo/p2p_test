@@ -83,6 +83,8 @@ def end_host():
 		run('python control.py end')
 
 def getlog(r='sender', n=''):
+	with cd(CONFIG_PATH_BASE):
+		run('python control.py stat')
 	if r == 'sender':
 		get(LOG_PATH_BASE + config['log_file'] + 'stat.json', 'getfiles/' + 'stat_sender_'+ n + '.json')
 	elif r == 'peer':
