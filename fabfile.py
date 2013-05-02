@@ -23,8 +23,7 @@ def run_sender(option = 'setup'):
 	elif option == 'start':
 		pass
 	elif option == 'getlog':
-		pass
-
+		execute(getlog, 'sender', sender[0], role="sender")	
 
 def setup_sender():
 	put('genfiles/*', CONFIG_PATH_BASE)
@@ -33,15 +32,30 @@ def setup_sender():
 
 @task
 def run_peers(option = 'setup'):
-	for p in peers:
-		gen_nep2p_files([], p[1], p[2])
-		execute(setup_peer, host=p[3])
+	if option not in HOST_OPTIONS:
+		print 'Wrong option'
+		return
+	if option == 'setup':
+		for p in peers:
+			gen_nep2p_files([], p[1], p[2])
+			execute(setup_peer, host=p[3])
+	elif option == 'start':
+		pass
+	elif option == 'getlog':
+		for p in peers:
+			execute(getlog, 'peer', p[0], host=p[3])
 
 def setup_peer():
 	put('genfiles/*', CONFIG_PATH_BASE)
 
+def getlog(r='sender', n=''):
+	if r == 'sender':
+		get(LOG_PATH_BASE + 'stat.json', 'getfiles/' + 'stat_sender_'+ n + '.json')
+	elif r == 'peer':
+		get(LOG_PATH_BASE + 'stat.json', 'getfiles/' + 'stat_peer_' + n + '.json')
+
 @task
-def setup_config(t = 'nep2p', cf = 'config.json', d = False, l = False):
+def setup(t = 'nep2p', cf = 'config.json', d = False, l = False):
 	global config, sender, peers
 	# check input
 	print 'Check input ...'
