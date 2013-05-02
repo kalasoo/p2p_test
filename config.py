@@ -1,11 +1,12 @@
 from json import loads
+from time import time
 
 HOST_OPTIONS = ('setup', 'start', 'getlog')
 P2P_SYS = ('nep2p', 'bt', 'libswft')
 FILE_SIZE = ('1K', '10K', '100K', '1M', '10M')
 DEFAULT_SENDER = 'p2plab'
 CONFIG_PATH_BASE = '~/fyp/fyp_nep2p/'
-LOG_PATH_BASE = '~/fyp/fyp_nep2p/log/'
+LOG_PATH_BASE = 'log/'
 
 resolver = {
 	"p2plab": {
