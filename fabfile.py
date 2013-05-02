@@ -22,6 +22,10 @@ def run_sender(option = 'setup', job = 'all'): #setup => job = ('putfile', 'upda
 		execute(setup_sender, job, role="sender")
 	elif option == 'start':
 		execute(start_sender, role="sender")
+	elif option == 'check':
+		execute(check_host, role="sender")
+	elif option == 'end':
+		execute(end_host, role="sender")
 	elif option == 'getlog':
 		execute(getlog, 'sender', sender[0], role="sender")	
 
@@ -48,6 +52,10 @@ def run_peers(option = 'setup', job = 'all'): #setup => job = ('putfile', 'updat
 			execute(setup_peer, job, host=p[3])
 	elif option == 'start':
 		execute(start_peer, role="peers")
+	elif option == 'check':
+		execute(check_host, role="peers")
+	elif option == 'end':
+		execute(end_host, role="peers")
 	elif option == 'getlog':
 		for p in peers:
 			execute(getlog, 'peer', p[0], host=p[3])
@@ -63,6 +71,16 @@ def setup_peer(job):
 def start_peer():
 	with cd(CONFIG_PATH_BASE):
 		run('python control.py start')
+
+@parallel
+def check_host():
+	with cd(CONFIG_PATH_BASE):
+		run('python control.py check')
+
+@parallel
+def end_host():
+	with cd(CONFIG_PATH_BASE):
+		run('python control.py end')
 
 def getlog(r='sender', n=''):
 	if r == 'sender':
