@@ -1,4 +1,5 @@
 {
+	"log_file": "",
 	"file_size": "1M",
 	"num_init_peer": 1,
 	"num_peer": 1,
