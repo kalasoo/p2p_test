@@ -1,3 +1,4 @@
+from config import *
 from json import dumps, loads
 
 def gen_nep2p_files(nodes, port, asid):
@@ -30,6 +31,7 @@ def gen_config(asid):
 	f = open('nep2p/config.json', 'r')
 	d = loads(f.read())
 	d['asid'] = asid
+	d['log_file_base'] = LOG_PATH_BASE
 	json = dumps(d)
 	f.close()
 	# write to config.json
