@@ -13,23 +13,32 @@ env.roledefs = {
 }
 
 @task
-def run_sender():
-	gen_nep2p_files([(x[3].split('@')[1], x[2]) for x in peers], sender[1], sender[2])
-	execute(setup_sender, role="sender")
+def run_sender(option = 'setup'):
+	if option not in HOST_OPTIONS:
+		print 'Wrong option'
+		return
+	if option == 'setup':
+		gen_nep2p_files([(x[3].split('@')[1], x[2]) for x in peers], sender[1], sender[2])
+		execute(setup_sender, role="sender")
+	elif option == 'start':
+		pass
+	elif option == 'getlog':
+		pass
+
 
 def setup_sender():
-	put('genfiles/*', DEFAULT_PATH_BASE)
-	with cd(DEFAULT_PATH_BASE):
+	put('genfiles/*', CONFIG_PATH_BASE)
+	with cd(CONFIG_PATH_BASE):
 		run('dd if=/dev/urandom of=./{0}.dat bs={1} count=1'.format(config['file_size'], config['file_size']))
 
 @task
-def run_peers():
+def run_peers(option = 'setup'):
 	for p in peers:
 		gen_nep2p_files([], p[1], p[2])
 		execute(setup_peer, host=p[3])
 
 def setup_peer():
-	put('genfiles/*', DEFAULT_PATH_BASE) 
+	put('genfiles/*', CONFIG_PATH_BASE)
 
 @task
 def setup_config(t = 'nep2p', cf = 'config.json', d = False, l = False):
