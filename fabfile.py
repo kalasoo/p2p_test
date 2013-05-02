@@ -13,15 +13,15 @@ env.roledefs = {
 }
 
 @task
-def run_sender(option = 'setup'):
+def run_sender(option = 'setup', reset = False):
 	if option not in HOST_OPTIONS:
 		print 'Wrong option'
 		return
-	if option == 'setup':
-		gen_nep2p_files([(x[3].split('@')[1], x[2]) for x in peers], sender[1], sender[2])
+	if option == 'setup' and reset:
+		gen_nep2p_files([(x[3].split('@')[1], x[2]) for x in peers], sender[1], sender[2], config['log_file'])
 		execute(setup_sender, role="sender")
 	elif option == 'start':
-		pass
+		execute(start_sender, role="sender")
 	elif option == 'getlog':
 		execute(getlog, 'sender', sender[0], role="sender")	
 
@@ -29,30 +29,41 @@ def setup_sender():
 	put('genfiles/*', CONFIG_PATH_BASE)
 	with cd(CONFIG_PATH_BASE):
 		run('dd if=/dev/urandom of=./{0}.dat bs={1} count=1'.format(config['file_size'], config['file_size']))
+		run('python control.py update')
 
+def start_sender():
+	with cd(CONFIG_PATH_BASE):
+		run('python control.py start -	f ' + config['file_size'] + '.dat')
 @task
-def run_peers(option = 'setup'):
+def run_peers(option = 'setup', reset = False):
 	if option not in HOST_OPTIONS:
 		print 'Wrong option'
 		return
-	if option == 'setup':
+	if option == 'setup' and reset:
 		for p in peers:
-			gen_nep2p_files([], p[1], p[2])
+			gen_nep2p_files([], p[1], p[2], config['log_file'])
 			execute(setup_peer, host=p[3])
 	elif option == 'start':
-		pass
+		execute(start_peer, role="peers")
 	elif option == 'getlog':
 		for p in peers:
 			execute(getlog, 'peer', p[0], host=p[3])
 
 def setup_peer():
 	put('genfiles/*', CONFIG_PATH_BASE)
+	with cd(CONFIG_PATH_BASE):
+		run('python control.py update')
+
+@parallel
+def start_peer():
+	with cd(CONFIG_PATH_BASE):
+		run('python control.py start')
 
 def getlog(r='sender', n=''):
 	if r == 'sender':
-		get(LOG_PATH_BASE + 'stat.json', 'getfiles/' + 'stat_sender_'+ n + '.json')
+		get(LOG_PATH_BASE + config['log_file'] + 'stat.json', 'getfiles/' + 'stat_sender_'+ n + '.json')
 	elif r == 'peer':
-		get(LOG_PATH_BASE + 'stat.json', 'getfiles/' + 'stat_peer_' + n + '.json')
+		get(LOG_PATH_BASE + config['log_file'] + 'stat.json', 'getfiles/' + 'stat_peer_' + n + '.json')
 
 @task
 def setup(t = 'nep2p', cf = 'config.json', d = False, l = False):
