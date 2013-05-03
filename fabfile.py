@@ -13,7 +13,7 @@ env.roledefs = {
 }
 
 @task
-def run_sender(option = 'setup', job = 'all'): #setup => job = ('putfile', 'update', 'all') 
+def s(option = 'setup', job = 'all'): #setup => job = ('putfile', 'update', 'all') 
 	if option not in HOST_OPTIONS:
 		print 'Wrong option'
 		return
@@ -42,7 +42,7 @@ def start_sender():
 	with cd(CONFIG_PATH_BASE):
 		run('python control.py start -f ' + config['file_size'] + '.dat')
 @task
-def run_peers(option = 'setup', job = 'all'): #setup => job = ('putfile', 'update', 'all') 
+def p(option = 'setup', job = 'all'): #setup => job = ('putfile', 'update', 'all') 
 	if option not in HOST_OPTIONS:
 		print 'Wrong option'
 		return
@@ -66,7 +66,6 @@ def setup_peer(job):
 	if job == 'update' or job == 'all':
 		with cd(CONFIG_PATH_BASE):
 			run('python control.py update')
-
 @parallel
 def start_peer():
 	with cd(CONFIG_PATH_BASE):
@@ -80,15 +79,15 @@ def check_host():
 @parallel
 def end_host():
 	with cd(CONFIG_PATH_BASE):
-		run('python control.py end')
+		run('python control.py end -r s')
 
 def getlog(r='sender', n=''):
 	with cd(CONFIG_PATH_BASE):
 		run('python control.py stat')
 	if r == 'sender':
-		get(LOG_PATH_BASE + config['log_file'] + 'stat.json', 'getfiles/' + 'stat_sender_'+ n + '.json')
+		get(CONFIG_PATH_BASE + LOG_PATH_BASE + config['log_file'] + 'stat.json', 'getfiles/' + 'stat_sender_'+ n + '.json')
 	elif r == 'peer':
-		get(LOG_PATH_BASE + config['log_file'] + 'stat.json', 'getfiles/' + 'stat_peer_' + n + '.json')
+		get(CONFIG_PATH_BASE + LOG_PATH_BASE + config['log_file'] + 'stat.json', 'getfiles/' + 'stat_peer_' + n + '.json')
 
 @task
 def setup(t = 'nep2p', cf = 'config.json', d = False, l = False):
