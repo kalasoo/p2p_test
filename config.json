@@ -1,14 +1,14 @@
 {
-	"log_file": "haha/",
-	"file_size": "1M",
+	"log_file": "",
+	"file_size": "10M",
 	"num_init_peer": 1,
-	"num_peer": 2,
+	"num_peer": 3,
 	"packet_loss_rate": null,
 	"corruption_rate": null,
-	"sender": "yxhaws",
+	"sender": null,
 	"nodes": {
-		"ymaws": [39951, 3000],
-		"yxhaws": [39951, 3000],
-		"s1": [39951, 3000]
+		"p2plab": [39951, 3000],
+		"s1": [39951, 3000],
+		"s3": [39951, 3000]
 	}
 }
