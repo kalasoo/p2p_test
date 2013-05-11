@@ -5,9 +5,9 @@
 	"num_peer": 3,
 	"packet_loss_rate": null,
 	"corruption_rate": null,
-	"sender": null,
+	"sender": "yxhaws",
 	"nodes": {
-		"p2plab": [39951, 3000],
+		"yxhaws": [39951, 3000],
 		"s1": [39951, 3000],
 		"s3": [39951, 3000]
 	}

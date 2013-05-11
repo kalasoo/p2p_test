@@ -33,7 +33,7 @@ def resolve(host_name):
 	if host_name not in resolver.keys():
 		if host_name in pl_nodes:
 			return {
-				"host": "ubuntu@" + pl_nodes[host_name][0],
+				"host": "cuhk_inc_01@" + pl_nodes[host_name][1],
 				"type": "key",
 				"key": "PlanetLabKey"
 			}
