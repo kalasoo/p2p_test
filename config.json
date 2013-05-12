@@ -1,14 +1,20 @@
 {
-	"log_file": "",
-	"file_size": "10M",
+	"version": "a16",
+	"config_path_base": "~/fyp/nep2p2_ms3/",
+	"log_file": "May_12_Test/",
+	"file_size": "1M",
 	"num_init_peer": 1,
-	"num_peer": 3,
+	"num_peer": 6,
 	"packet_loss_rate": null,
 	"corruption_rate": null,
-	"sender": "yxhaws",
+	"sender": "s8",
 	"nodes": {
-		"yxhaws": [39951, 3000],
 		"s1": [39951, 3000],
-		"s3": [39951, 3000]
+		"s2": [39951, 3000],
+		"s3": [39951, 3000],
+		"s5": [39951, 3000],
+		"s6": [39951, 3000],
+		"s7": [39951, 3000],
+		"s8": [39951, 3000]
 	}
 }

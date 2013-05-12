@@ -13,15 +13,15 @@ env.roledefs = {
 }
 
 @task
-def s(option = 'setup', job = 'all', version = 'a13'): 
+def s(option = 'setup', job = 'all'): 
 	#setup => job = ('putfile', 'update', 'all')
-	#setup => version = ('a13', 'a16', 'a16rudp')
+	#setup => VERSION = ('a13', 'a16', 'a16_rudp')
 	if option not in HOST_OPTIONS:
 		print 'Wrong option'
 		return
 	if option == 'setup':
 		gen_nep2p_files([(x[3].split('@')[1], x[2]) for x in peers], sender[1], sender[2], config['log_file'])
-		execute(setup_sender, job, version,  role="sender")
+		execute(setup_sender, job,  role="sender")
 	elif option == 'start':
 		execute(start_sender, role="sender")
 	elif option == 'check':
@@ -31,29 +31,29 @@ def s(option = 'setup', job = 'all', version = 'a13'):
 	elif option == 'getlog':
 		execute(getlog, 'sender', sender[0], role="sender")	
 
-def setup_sender(job, version):
+def setup_sender(job):
 	if job == 'putfile' or job == 'all':
 		put('genfiles/*', CONFIG_PATH_BASE)
 		with cd(CONFIG_PATH_BASE):
 			run('dd if=/dev/urandom of=./{0}.dat bs={1} count=1'.format(config['file_size'], config['file_size']))
 	if job == 'update' or job == 'all':
 		with cd(CONFIG_PATH_BASE):
-			run('python control.py update -v ' + version)
+			run('python control.py update -v ' + VERSION)
 
 def start_sender():
 	with cd(CONFIG_PATH_BASE):
 		run('python control.py start -f ' + config['file_size'] + '.dat')
 @task
-def p(option = 'setup', job = 'all', version = 'a13'): 
+def p(option = 'setup', job = 'all'): 
 	#setup => job = ('putfile', 'update', 'all')
-	#setup => version = ('a13', 'a16', 'a16rudp')
+	#setup => VERSION = ('a13', 'a16', 'a16_rudp')
 	if option not in HOST_OPTIONS:
 		print 'Wrong option'
 		return
 	if option == 'setup':
 		for p in peers:
 			gen_nep2p_files([], p[1], p[2], config['log_file'])
-			execute(setup_peer, job, version, host=p[3])
+			execute(setup_peer, job, host=p[3])
 	elif option == 'start':
 		execute(start_peer, role="peers")
 	elif option == 'check':
@@ -64,12 +64,12 @@ def p(option = 'setup', job = 'all', version = 'a13'):
 		for p in peers:
 			execute(getlog, 'peer', p[0], host=p[3])
 
-def setup_peer(job, version):
+def setup_peer(job):
 	if job == 'putfile' or job == 'all':
 		put('genfiles/*', CONFIG_PATH_BASE)
 	if job == 'update' or job == 'all':
 		with cd(CONFIG_PATH_BASE):
-			run('python control.py update -v ' + version)
+			run('python control.py update -v ' + VERSION)
 @parallel
 def start_peer():
 	with cd(CONFIG_PATH_BASE):
@@ -89,9 +89,9 @@ def getlog(r='sender', n=''):
 	with cd(CONFIG_PATH_BASE):
 		run('python control.py stat')
 	if r == 'sender':
-		get(CONFIG_PATH_BASE + LOG_PATH_BASE + config['log_file'] + 'stat.json', 'getfiles/' + 'stat_sender_'+ n + '.json')
+		get(CONFIG_PATH_BASE + LOG_PATH_BASE + config['log_file'] + 'stat.json', 'getfiles/' + config['log_file'] + 'stat_sender_'+ n + '.json')
 	elif r == 'peer':
-		get(CONFIG_PATH_BASE + LOG_PATH_BASE + config['log_file'] + 'stat.json', 'getfiles/' + 'stat_peer_' + n + '.json')
+		get(CONFIG_PATH_BASE + LOG_PATH_BASE + config['log_file'] + 'stat.json', 'getfiles/' + config['log_file'] + 'stat_peer_' + n + '.json')
 
 @task
 def setup(t = 'nep2p', cf = 'config.json', d = False, l = False):
