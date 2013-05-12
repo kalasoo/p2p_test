@@ -1,6 +1,6 @@
 from json import loads
 
-HOST_OPTIONS = ('setup', 'start', 'getlog', 'end', 'check')
+HOST_OPTIONS = ('setup', 'start', 'getlog', 'end', 'check', 'putfile')
 P2P_SYS = ('nep2p', 'bt', 'libswft')
 FILE_SIZE = ('1K', '10K', '100K', '1M', '5M', '10M', '20M', '30M', '40M', '50M', '100M')
 DEFAULT_SENDER = 's8'
