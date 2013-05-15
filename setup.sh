@@ -2,6 +2,7 @@
 
 mkdir genfiles
 mkdir getfiles
+mkdir torrents
 
 wget https://www.dropbox.com/s/pa7syp5krrymhsu/Key.zip
 unzip Key.zip
