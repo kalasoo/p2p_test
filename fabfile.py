@@ -33,15 +33,15 @@ def s(option = 'setup', job = 'all'):
 
 def setup_sender(job):
 	if job == 'putfile' or job == 'all':
-		put('genfiles/*', NEP2P_PATH_BASE)
-		with cd(NEP2P_PATH_BASE):
+		put('genfiles/*', config['config_path_base'])
+		with cd(config['config_path_base']):
 			run('dd if=/dev/urandom of=./{0}.dat bs={1} count=1'.format(config['file_size'], config['file_size']))
 	if job == 'update' or job == 'all':
-		with cd(NEP2P_PATH_BASE):
+		with cd(config['config_path_base']):
 			run('python control.py update -v ' + config['version'])
 
 def start_sender():
-	with cd(NEP2P_PATH_BASE):
+	with cd(config['config_path_base']):
 		run('python control.py start -f ' + config['file_size'] + '.dat')
 @task
 def p(option = 'setup', job = 'all'): 
@@ -65,32 +65,32 @@ def p(option = 'setup', job = 'all'):
 
 def setup_peer(job):
 	if job == 'putfile' or job == 'all':
-		put('genfiles/*', NEP2P_PATH_BASE)
+		put('genfiles/*', config['config_path_base'])
 	if job == 'update' or job == 'all':
-		with cd(NEP2P_PATH_BASE):
+		with cd(config['config_path_base']):
 			run('python control.py update -v ' + config['version'])
 @parallel
 def start_peer():
-	with cd(NEP2P_PATH_BASE):
+	with cd(config['config_path_base']):
 		run('python control.py start')
 
 @parallel
 def check_host():
-	with cd(NEP2P_PATH_BASE):
+	with cd(config['config_path_base']):
 		run('python control.py check')
 
 @parallel
 def end_host():
-	with cd(NEP2P_PATH_BASE):
+	with cd(config['config_path_base']):
 		run('python control.py end -r s')
 
 def getlog(r='sender', n=''):
-	with cd(NEP2P_PATH_BASE):
+	with cd(config['config_path_base']):
 		run('python control.py stat')
 	if r == 'sender':
-		get(NEP2P_PATH_BASE + NEP2P_LOG_PATH + config['log_file'] + 'stat.json', 'getfiles/' + config['log_file'] + 'stat_sender_'+ n + '.json')
+		get(config['config_path_base'] + config['log_file'] + config['log_file'] + 'stat.json', 'getfiles/' + config['log_file'] + 'stat_sender_'+ n + '.json')
 	elif r == 'peer':
-		get(NEP2P_PATH_BASE + NEP2P_LOG_PATH + config['log_file'] + 'stat.json', 'getfiles/' + config['log_file'] + 'stat_peer_' + n + '.json')
+		get(config['config_path_base'] + config['log_file'] + config['log_file'] + 'stat.json', 'getfiles/' + config['log_file'] + 'stat_peer_' + n + '.json')
 
 @task
 def setup(t = 'nep2p', cf = 'config.json', d = False, l = False):
@@ -159,6 +159,10 @@ def check_config(config):
 	if p2p_type == 'nep2p' and config['version'] not in NEP2P_VERSIONS:
 		print 'nep2p_version'
 		return False
+	if config['config_path_base'] == '':
+		config['config_path_base'] = NEP2P_PATH_BASE
+	if config['log_file'] == '':
+		config['log_file'] = NEP2P_LOG_PATH
 	if config['file_size'] not in FILE_SIZE:
 		print 'file_size'
 		return False
