@@ -118,8 +118,8 @@ class Nep2pTest(TObj):
 		log  = self.config['log_file']
 		with cd(path):
 			run('python control.py stat')
-			get(log + 'stat.json',
-				'getfiles/' + log + 'stat_' + name + '.json')
+		get(path + log + 'stat.json',
+			'getfiles/' + log + 'stat_' + name + '.json')
 #
 # check
 #
@@ -130,11 +130,34 @@ class Nep2pTest(TObj):
 			execute(self._check, role="peers")
 	@parallel
 	def _check(self):
-		
+		with cd(self.config['config_path_base']):
+			run('python control.py check')
+#
+# end
+#
 	def end(self, isSnd = True):
-		pass
+		if isSnd:
+			execute(self._end, role="sender")
+		else:
+			execute(self._end, role="peers")
+	@parallel
+	def _end(self):
+		with cd(self.config['config_path_base']):
+			run('python control.py end -r s')
+#
+# clean
+#
 	def clean(self, isSnd = True):
+		if isSnd:
+			execute(self._clean, role="sender")
+		else:
+			execute(self._clean, role="peers")
+	@parallel
+	def _clean(self):
 		pass
+#
+# generate files
+#
 	def gen_nep2p_files(self, nodes, port, asid, log_path):
 		self.gen_nodes(nodes)
 		self.gen_nep2p(port)
@@ -173,11 +196,97 @@ class Nep2pTest(TObj):
 class BtTest(TObj):
 	def __init__(self, config):
 		super(BtTest, self).__init__(config)
-	# inherited
+		self.tracker_name = 'udp://tracker.openbittorrent.com:80/announce'
+		self.file_name = self.config['file_size'] + '.dat'
+		self.torrent_name = self.config['file_size'] + '.dat.torrent'
+	def check_config(self):
+		super(BtTest, self).check_config()
+		return True
+	def add_hosts(self, sender, peers):
+		self.sender = sender 	# [NAME, PORT, ASID, HOST]
+		self.peers = peers		# [NAME, PORT, ASID, HOST]
+#
+# setup
+#
 	def setup(self, isSnd = True, job = 'all'):
-		# job = ('putfile', 'update', 'all')
-		pass
+		# job = ('genfile', 'gentorrent', 'gettorrent', 'all')
+		if isSnd:
+			execute(self.setup_sender, job, role="sender")
+		else:
+			for p in self.peers:
+				execute(self.setup_peer, host=p[3])
+	def setup_sender(self, job):
+		if job == 'genfile' or job == 'all':
+			with cd(BT_PATH_BASE + BT_DOWNLOADS_PATH):
+				run('dd if=/dev/urandom of=./{0}.dat bs={1} count=1'
+					.format(self.config['file_size'], self.config['file_size']))
+		if job == 'gentorrent' or job == 'all':
+			with cd(BT_PATH_BASE + BT_DOWNLOADS_PATH):
+				run('transmission-create ' + self.file_name + 
+					' -t ' + self.tracker_name + 
+					' -o ' + self.torrent_name +
+					' -c ' + '\'FYP: YM & YXH\'')
+				run('mv ' + self.torrent_name + ' ../torrents ')
+		if job == 'gettorrent' or job == 'all':
+			get(BT_PATH_BASE + BT_TORRENTS_PATH + self.torrent_name, 'torrents/')
+	def setup_peer(self):
+		put('torrents/' + self.torrent_name, BT_PATH_BASE + BT_TORRENTS_PATH)
+#
+# show
+#
+	def show(self, isSnd = True, job = 'all'):
+		# job = ('downloads', 'torrents', 'all')
+		if isSnd:
+			execute(self._show, job, role="sender")
+		else:
+			execute(self._show, job, role="peers")
+	@parallel
+	def _show(self, job):
+		if job == 'downloads' or job == 'all':
+			run('ls ' + BT_PATH_BASE + BT_DOWNLOADS_PATH)
+		if job == 'torrents' or job == 'all':
+			run('ls ' + BT_PATH_BASE + BT_TORRENTS_PATH)
+#
+# show_daemon
+#
+	def show_daemon(self, isSnd = True):
+		# job = ('downloads', 'torrents', 'all')
+		if isSnd:
+			execute(self._show_daemon, role="sender")
+		else:
+			execute(self._show_daemon, role="peers")
+	@parallel
+	def _show_daemon(self):
+		run('ls ~/.config/')
+#
+# start
+#		
 	def start(self, isSnd = True):
-		pass
+		if isSnd:
+			execute(self.start_sender, role="sender")
+		else:
+			execute(self.start_peer, role="peers")
+	def start_sender(self):
+		with cd(BT_PATH_BASE):
+			run('./trc -- -a torrents/' + self.torrent_name + ' -w downloads/')
+	@parallel
+	def start_peer(self):
+		with cd(BT_PATH_BASE):
+			run('./trc -- -a torrents/' + self.torrent_name + ' -w downloads/')
+#
+# show_daemon
+#
+	def show_bt(self, isSnd = True):
+		# job = ('downloads', 'torrents', 'all')
+		if isSnd:
+			execute(self._show_bt, role="sender")
+		else:
+			execute(self._show_bt, role="peers")
+	@parallel
+	def _show_bt(self):
+		run('transmission-remote -l')
+#
+# getlog
+#	
 	def getlog(self, isSnd = True):
 		pass
