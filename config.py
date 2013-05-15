@@ -6,8 +6,14 @@ FILE_SIZE = ('1K', '10K', '100K', '1M', '5M', '10M', '20M', '30M', '40M', '50M',
 NEP2P_VERSIONS = ('a13', 'a16', 'a16_rudp')
 DEFAULT_SENDER = 's8'
 
-CONFIG_PATH_BASE = '~/fyp/fyp_nep2p/'
-LOG_PATH_BASE = 'log/'
+NEP2P_PATH_BASE = '~/fyp/fyp_nep2p/'
+NEP2P_LOG_PATH = 'log/'
+#CONFIG_PATH_BASE = '~/fyp/fyp_nep2p/'
+#LOG_PATH_BASE = 'log/'
+
+BT_PATH_BASE = '~/fyp/transmission/'
+BT_DOWNLOADS_PATH = 'downloads/'
+BT_TORRENTS_PATH = 'torrents/'
 
 pl_nodes = loads(open('nodes_addr.json', 'r').read())
 
