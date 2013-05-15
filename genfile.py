@@ -31,7 +31,7 @@ def gen_config(asid, log_path):
 	f = open('nep2p/config.json', 'r')
 	d = loads(f.read())
 	d['asid'] = asid
-	d['log_file_base'] = LOG_PATH_BASE + log_path
+	d['log_file_base'] = NEP2P_LOG_PATH + log_path
 	json = dumps(d)
 	f.close()
 	# write to config.json
