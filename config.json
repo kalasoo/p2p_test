@@ -1,8 +1,8 @@
 {
-	"version": "a13",
-	"config_path_base": "~/fyp/fyp_nep2p/",
-	"log_file": "May_12_40M_a13_7/",
-	"file_size": "40M",
+	"version": "a16",
+	"config_path_base": "~/fyp/nep2p2_ms3/",
+	"log_file": "May_15_a16_test/",
+	"file_size": "10M",
 	"num_init_peer": 1,
 	"num_peer": 6,
 	"packet_loss_rate": null,
