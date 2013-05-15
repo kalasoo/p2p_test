@@ -4,6 +4,7 @@ from config import *
 from genfile import *
 
 # global variablesi
+p2p_type = None 
 config = None
 sender = None 	# [NAME, PORT, ASID, HOST]
 peers = None 	# [NAME, PORT, ASID, HOST]
@@ -15,7 +16,6 @@ env.roledefs = {
 @task
 def s(option = 'setup', job = 'all'): 
 	#setup => job = ('putfile', 'update', 'all')
-	#setup => VERSION = ('a13', 'a16', 'a16_rudp')
 	if option not in HOST_OPTIONS:
 		print 'Wrong option'
 		return
@@ -38,7 +38,7 @@ def setup_sender(job):
 			run('dd if=/dev/urandom of=./{0}.dat bs={1} count=1'.format(config['file_size'], config['file_size']))
 	if job == 'update' or job == 'all':
 		with cd(CONFIG_PATH_BASE):
-			run('python control.py update -v ' + VERSION)
+			run('python control.py update -v ' + config['version'])
 
 def start_sender():
 	with cd(CONFIG_PATH_BASE):
@@ -46,7 +46,6 @@ def start_sender():
 @task
 def p(option = 'setup', job = 'all'): 
 	#setup => job = ('putfile', 'update', 'all')
-	#setup => VERSION = ('a13', 'a16', 'a16_rudp')
 	if option not in HOST_OPTIONS:
 		print 'Wrong option'
 		return
@@ -69,7 +68,7 @@ def setup_peer(job):
 		put('genfiles/*', CONFIG_PATH_BASE)
 	if job == 'update' or job == 'all':
 		with cd(CONFIG_PATH_BASE):
-			run('python control.py update -v ' + VERSION)
+			run('python control.py update -v ' + config['version'])
 @parallel
 def start_peer():
 	with cd(CONFIG_PATH_BASE):
@@ -95,33 +94,34 @@ def getlog(r='sender', n=''):
 
 @task
 def setup(t = 'nep2p', cf = 'config.json', d = False, l = False):
-	global config, sender, peers
+	global p2p_type, config, sender, peers
 	# check input
-	print 'Check input ...'
+	print 'Check input...'
 	if t not in P2P_SYS:
 		print 'Wrong P2P system type'
 		return
+	else:
+		p2p_type = t;
+		print '\tP2P type:', p2p_type
 	try:
 		f = open(cf, 'r')
 		config = loads(f.read())
+		print '\tConfig file:', cf
 	except:
 		print 'Wrong configuration file'
 		return
 
 	d = d if bool(d) else False;
 	l = l if bool(l) else False;
-	print 'Valid input\n'
 
 	# parse configuration
-	print 'Check configuration file...'
+	print '\nCheck configuration file...'
 	if not check_config(config):
 		print 'Configuration file is invalid'
 		return
-	else:
-		print 'Configuration file is valid\n'
 
 	# setup roles
-	print 'Setup roles...'
+	print '\nSetup roles...'
 	# sender & peers
 	sender = [config['sender']] + config['nodes'].pop(config['sender'])
 	peers = [[k] + v for k, v in config['nodes'].iteritems()][:config['num_peer']]
@@ -154,9 +154,11 @@ def setup(t = 'nep2p', cf = 'config.json', d = False, l = False):
 		print '\t\t' + str(p)
 	print '\tkey:'
 	print '\t\t' + str(env.key_filename)
-	print 'Roles are deployed\n'
 
 def check_config(config):
+	if p2p_type == 'nep2p' and config['version'] not in NEP2P_VERSIONS:
+		print 'nep2p_version'
+		return False
 	if config['file_size'] not in FILE_SIZE:
 		print 'file_size'
 		return False

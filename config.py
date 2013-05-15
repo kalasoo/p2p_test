@@ -3,16 +3,13 @@ from json import loads
 HOST_OPTIONS = ('setup', 'start', 'getlog', 'end', 'check', 'putfile')
 P2P_SYS = ('nep2p', 'bt', 'libswft')
 FILE_SIZE = ('1K', '10K', '100K', '1M', '5M', '10M', '20M', '30M', '40M', '50M', '100M')
+NEP2P_VERSIONS = ('a13', 'a16', 'a16_rudp')
 DEFAULT_SENDER = 's8'
 
-config = loads(open('config.json', 'r').read())
-CONFIG_PATH_BASE = config['config_path_base'] if 'config_path_base' in config else  '~/fyp/nep2p2_ms3/'
-VERSION = config['version'] if 'version' in config else 'a16'
+CONFIG_PATH_BASE = '~/fyp/fyp_nep2p/'
 LOG_PATH_BASE = 'log/'
 
 pl_nodes = loads(open('nodes_addr.json', 'r').read())
-
-print pl_nodes
 
 resolver = {
 	"s8": {
