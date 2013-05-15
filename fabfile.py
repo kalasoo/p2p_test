@@ -88,9 +88,9 @@ def getlog(r='sender', n=''):
 	with cd(config['config_path_base']):
 		run('python control.py stat')
 	if r == 'sender':
-		get(config['config_path_base'] + config['log_file'] + config['log_file'] + 'stat.json', 'getfiles/' + config['log_file'] + 'stat_sender_'+ n + '.json')
+		get(config['config_path_base'] + config['log_file'] + 'stat.json', 'getfiles/' + config['log_file'] + 'stat_sender_'+ n + '.json')
 	elif r == 'peer':
-		get(config['config_path_base'] + config['log_file'] + config['log_file'] + 'stat.json', 'getfiles/' + config['log_file'] + 'stat_peer_' + n + '.json')
+		get(config['config_path_base'] + config['log_file'] + 'stat.json', 'getfiles/' + config['log_file'] + 'stat_peer_' + n + '.json')
 
 @task
 def setup(t = 'nep2p', cf = 'config.json', d = False, l = False):
