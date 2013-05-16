@@ -212,12 +212,14 @@ class BtTest(TObj):
 	def setup(self, isSnd = True, job = 'all'):
 		# job = ('genfile', 'gentorrent', 'gettorrent', 'all')
 		if isSnd:
+			self.gen_config()
 			execute(self.setup_sender, job, role="sender")
 		else:
 			for p in self.peers:
+				self.gen_config()
 				execute(self.setup_peer, host=p[3])
 	def setup_sender(self, job):
-		put('config.json', BT_PATH_BASE)
+		put('genfiles/config.json', BT_PATH_BASE)
 		put('genfiles/btControl.py', BT_PATH_BASE)
 		if job == 'genfile' or job == 'all':
 			with cd(BT_PATH_BASE + BT_DOWNLOADS_PATH):
@@ -233,7 +235,7 @@ class BtTest(TObj):
 		if job == 'gettorrent' or job == 'all':
 			get(BT_PATH_BASE + BT_TORRENTS_PATH + self.torrent_name, 'torrents/')
 	def setup_peer(self):
-		put('config.json', BT_PATH_BASE)
+		put('genfiles/config.json', BT_PATH_BASE)
 		put('genfiles/btControl.py', BT_PATH_BASE)
 		put('torrents/' + self.torrent_name, BT_PATH_BASE + BT_TORRENTS_PATH)
 #
@@ -273,7 +275,7 @@ class BtTest(TObj):
 	@parallel
 	def _start(self):
 		with cd(BT_PATH_BASE):
-			run('python btControl.py start -t ' + self.torrent_name)
+			run('python btControl.py start -t file:///home/cuhk_inc_01/fyp/transmission/torrents/' + self.torrent_name)
 #
 # show_daemon
 #
@@ -290,7 +292,17 @@ class BtTest(TObj):
 # getlog
 #
 	def getlog(self, isSnd = True):
-		pass
+		if isSnd:
+			execute(self._getlog, 'sender_' + self.sender[0], role="sender")
+		else:
+			for p in self.peers:
+				execute(self._getlog, 'peer_' + p[0], host=p[3])
+	def _getlog(self, name):
+		log = self.config['log_file']
+		with cd(BT_PATH_BASE):
+			run('python btControl.py stat')
+		get(BT_PATH_BASE + BT_LOGS_PATH + log + 'stat.json',
+			'getfiles/' + log + 'stat_' + name + '.json')
 #
 # check
 #
@@ -324,5 +336,16 @@ class BtTest(TObj):
 	@parallel
 	def _clean(self):
 		with cd(BT_PATH_BASE):
-			run('python btControl.py clean')
+			run('python btControl.py clean -t all')
 			run('rm downloads/' + self.file_name)
+#
+# gen_config
+#
+	def gen_config(self):
+		d = {}
+		d['log_file_base'] = BT_LOGS_PATH + self.config['log_file']
+		json = dumps(d)
+		# write to config.json
+		f = open('genfiles/config.json', 'w')
+		f.write(json)
+		f.close()

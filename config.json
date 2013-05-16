@@ -1,15 +1,15 @@
 {
-	"version": "a13",
-	"config_path_base": "~/fyp/fyp_nep2p/",
-	"log_file": "ymtest/",
-	"file_size": "1M",
+	"version": "a16",
+	"config_path_base": "~/fyp/nep2p2_ms3/",
+	"log_file": "May_16_20M_a16_7/",
+	"file_size": "10M",
 	"num_init_peer": 1,
 	"num_peer": 1,
 	"packet_loss_rate": null,
 	"corruption_rate": null,
-	"sender": "s1",
+	"sender": "s8",
 	"nodes": {
 		"s1": [39951, 3000],
-		"s2": [39951, 3000]
+		"s8": [39951, 3000]
 	}
 }

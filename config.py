@@ -14,6 +14,7 @@ NEP2P_LOG_PATH = 'log/'
 BT_PATH_BASE = '~/fyp/transmission/'
 BT_DOWNLOADS_PATH = 'downloads/'
 BT_TORRENTS_PATH = 'torrents/'
+BT_LOGS_PATH = 'logs/'
 
 pl_nodes = loads(open('nodes_addr.json', 'r').read())
 
