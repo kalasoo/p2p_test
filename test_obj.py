@@ -291,3 +291,36 @@ class BtTest(TObj):
 #	
 	def getlog(self, isSnd = True):
 		pass
+#
+# check
+#
+	def check(self, isSnd = True):
+		if isSnd:
+			execute(self._check, role="sender")
+		else:
+			execute(self._check, role="peers")
+	@parallel
+	def _check(self):
+		pass
+#
+# end
+#
+	def end(self, isSnd = True):
+		if isSnd:
+			execute(self._end, role="sender")
+		else:
+			execute(self._end, role="peers")
+	@parallel
+	def _end(self):
+		pass
+#
+# clean
+#
+	def clean(self, isSnd = True):
+		if isSnd:
+			execute(self._clean, role="sender")
+		else:
+			execute(self._clean, role="peers")
+	@parallel
+	def _clean(self):
+		pass
