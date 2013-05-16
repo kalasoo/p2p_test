@@ -1,8 +1,8 @@
 {
 	"version": "a16",
 	"config_path_base": "~/fyp/nep2p2_ms3/",
-	"log_file": "May_16_20M_a16_7/",
-	"file_size": "10M",
+	"log_file": "May_16_20M_BT_2/",
+	"file_size": "20M",
 	"num_init_peer": 1,
 	"num_peer": 1,
 	"packet_loss_rate": null,
