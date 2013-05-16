@@ -210,17 +210,20 @@ class BtTest(TObj):
 # setup
 #
 	def setup(self, isSnd = True, job = 'all'):
-		# job = ('genfile', 'gentorrent', 'gettorrent', 'all')
+		# job = ('putfile', 'genfile', 'gentorrent', 'gettorrent', 'all')
 		if isSnd:
 			self.gen_config()
 			execute(self.setup_sender, job, role="sender")
 		else:
 			for p in self.peers:
 				self.gen_config()
-				execute(self.setup_peer, host=p[3])
+				execute(self.setup_peer, job, host=p[3])
 	def setup_sender(self, job):
-		put('genfiles/config.json', BT_PATH_BASE)
-		put('genfiles/btControl.py', BT_PATH_BASE)
+		if job == 'putfile' or job == 'all':
+			put('genfiles/config.json', BT_PATH_BASE)
+			put('genfiles/btControl.py', BT_PATH_BASE)
+			put('genfiles/logger.py', BT_PATH_BASE)
+			put('genfiles/statCollect.py', BT_PATH_BASE)
 		if job == 'genfile' or job == 'all':
 			with cd(BT_PATH_BASE + BT_DOWNLOADS_PATH):
 				run('dd if=/dev/urandom of=./{0}.dat bs={1} count=1'
@@ -234,10 +237,14 @@ class BtTest(TObj):
 				run('mv ' + self.torrent_name + ' ../torrents ')
 		if job == 'gettorrent' or job == 'all':
 			get(BT_PATH_BASE + BT_TORRENTS_PATH + self.torrent_name, 'torrents/')
-	def setup_peer(self):
-		put('genfiles/config.json', BT_PATH_BASE)
-		put('genfiles/btControl.py', BT_PATH_BASE)
+	def setup_peer(self, job):
+		if job == 'putfile' or job == 'all':
+			put('genfiles/config.json', BT_PATH_BASE)
+			put('genfiles/btControl.py', BT_PATH_BASE)
+			put('genfiles/logger.py', BT_PATH_BASE)
+			put('genfiles/statCollect.py', BT_PATH_BASE)
 		put('torrents/' + self.torrent_name, BT_PATH_BASE + BT_TORRENTS_PATH)
+
 #
 # show
 #
@@ -275,9 +282,9 @@ class BtTest(TObj):
 	@parallel
 	def _start(self):
 		with cd(BT_PATH_BASE):
-			run('python btControl.py start -t file:///home/cuhk_inc_01/fyp/transmission/torrents/' + self.torrent_name)
+			run('python btControl.py start -t \'file:///home/cuhk_inc_01/fyp/transmission/torrents/' + self.torrent_name + '\'')
 #
-# show_daemon
+# show_bt
 #
 	def show_bt(self, isSnd = True):
 		# job = ('downloads', 'torrents', 'all')
@@ -326,23 +333,35 @@ class BtTest(TObj):
 	def _end(self):
 		pass
 #
-# clean
+# clean_daemon
 #
-	def clean(self, isSnd = True):
+	def clean_daemon(self, isSnd = True):
 		if isSnd:
-			execute(self._clean, role="sender")
+			execute(self._clean_daemon, role="sender")
 		else:
-			execute(self._clean, role="peers")
+			execute(self._clean_daemon, role="peers")
 	@parallel
-	def _clean(self):
+	def _clean_daemon(self):
 		with cd(BT_PATH_BASE):
 			run('python btControl.py clean -t all')
+#
+# clean_file
+#
+	def clean_file(self, isSnd = True):
+		if isSnd:
+			execute(self._clean_file, role="sender")
+		else:
+			execute(self._clean_file, role="peers")
+	@parallel
+	def _clean_file(self):
+		with cd(BT_PATH_BASE):
 			run('rm downloads/' + self.file_name)
 #
 # gen_config
 #
 	def gen_config(self):
 		d = {}
+		d['log_precision'] = 1
 		d['log_file_base'] = BT_LOGS_PATH + self.config['log_file']
 		json = dumps(d)
 		# write to config.json
