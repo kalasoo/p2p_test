@@ -118,7 +118,7 @@ class Nep2pTest(TObj):
 		log  = self.config['log_file']
 		with cd(path):
 			run('python control.py stat')
-		get(path + log + 'stat.json',
+		get(path + 'log/' + log + 'stat.json',
 			'getfiles/' + log + 'stat_' + name + '.json')
 #
 # check
