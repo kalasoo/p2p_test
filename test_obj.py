@@ -217,6 +217,8 @@ class BtTest(TObj):
 			for p in self.peers:
 				execute(self.setup_peer, host=p[3])
 	def setup_sender(self, job):
+		put('config.json', BT_PATH_BASE)
+		put('genfiles/btControl.py', BT_PATH_BASE)
 		if job == 'genfile' or job == 'all':
 			with cd(BT_PATH_BASE + BT_DOWNLOADS_PATH):
 				run('dd if=/dev/urandom of=./{0}.dat bs={1} count=1'
@@ -231,6 +233,8 @@ class BtTest(TObj):
 		if job == 'gettorrent' or job == 'all':
 			get(BT_PATH_BASE + BT_TORRENTS_PATH + self.torrent_name, 'torrents/')
 	def setup_peer(self):
+		put('config.json', BT_PATH_BASE)
+		put('genfiles/btControl.py', BT_PATH_BASE)
 		put('torrents/' + self.torrent_name, BT_PATH_BASE + BT_TORRENTS_PATH)
 #
 # show
@@ -251,7 +255,6 @@ class BtTest(TObj):
 # show_daemon
 #
 	def show_daemon(self, isSnd = True):
-		# job = ('downloads', 'torrents', 'all')
 		if isSnd:
 			execute(self._show_daemon, role="sender")
 		else:
@@ -261,19 +264,16 @@ class BtTest(TObj):
 		run('ls ~/.config/')
 #
 # start
-#		
+#
 	def start(self, isSnd = True):
 		if isSnd:
-			execute(self.start_sender, role="sender")
+			execute(self._start, role="sender")
 		else:
-			execute(self.start_peer, role="peers")
-	def start_sender(self):
-		with cd(BT_PATH_BASE):
-			run('./trc -- -a torrents/' + self.torrent_name + ' -w downloads/')
+			execute(self._start, role="peers")
 	@parallel
-	def start_peer(self):
+	def _start(self):
 		with cd(BT_PATH_BASE):
-			run('./trc -- -a torrents/' + self.torrent_name + ' -w downloads/')
+			run('python btControl.py start -t ' + self.torrent_name)
 #
 # show_daemon
 #
@@ -288,7 +288,7 @@ class BtTest(TObj):
 		run('transmission-remote -l')
 #
 # getlog
-#	
+#
 	def getlog(self, isSnd = True):
 		pass
 #
@@ -323,4 +323,6 @@ class BtTest(TObj):
 			execute(self._clean, role="peers")
 	@parallel
 	def _clean(self):
-		pass
+		with cd(BT_PATH_BASE):
+			run('python btControl.py clean')
+			run('rm downloads/' + self.file_name)
