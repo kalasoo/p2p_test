@@ -1,100 +1,25 @@
-from fabric.api import *
 from json import loads
-from config import *
-from genfile import *
-
-# global variablesi
-p2p_type = None 
-config = None
-sender = None 	# [NAME, PORT, ASID, HOST]
-peers = None 	# [NAME, PORT, ASID, HOST]
-env.roledefs = {
-	'sender': [],
-	'peers': []
-}
+from test_obj import *
 
 @task
-def s(option = 'setup', job = 'all'): 
-	#setup => job = ('putfile', 'update', 'all')
-	if option not in HOST_OPTIONS:
-		print 'Wrong option'
-		return
-	if option == 'setup':
-		gen_nep2p_files([(x[3].split('@')[1], x[2]) for x in peers], sender[1], sender[2], config['log_file'])
-		execute(setup_sender, job,  role="sender")
-	elif option == 'start':
-		execute(start_sender, role="sender")
-	elif option == 'check':
-		execute(check_host, role="sender")
-	elif option == 'end':
-		execute(end_host, role="sender")
-	elif option == 'getlog':
-		execute(getlog, 'sender', sender[0], role="sender")	
+def s(o = 'setup', job = 'all'):
+	if o == 'setup' or o == 'show':
+		getattr(tObj, o)(True, job);
+	else:
+		getattr(tObj, o)(True);
 
-def setup_sender(job):
-	if job == 'putfile' or job == 'all':
-		put('genfiles/*', config['config_path_base'])
-		with cd(config['config_path_base']):
-			run('dd if=/dev/urandom of=./{0}.dat bs={1} count=1'.format(config['file_size'], config['file_size']))
-	if job == 'update' or job == 'all':
-		with cd(config['config_path_base']):
-			run('python control.py update -v ' + config['version'])
-
-def start_sender():
-	with cd(config['config_path_base']):
-		run('python control.py start -f ' + config['file_size'] + '.dat')
 @task
-def p(option = 'setup', job = 'all'): 
-	#setup => job = ('putfile', 'update', 'all')
-	if option not in HOST_OPTIONS:
-		print 'Wrong option'
-		return
-	if option == 'setup':
-		for p in peers:
-			gen_nep2p_files([], p[1], p[2], config['log_file'])
-			execute(setup_peer, job, host=p[3])
-	elif option == 'start':
-		execute(start_peer, role="peers")
-	elif option == 'check':
-		execute(check_host, role="peers")
-	elif option == 'end':
-		execute(end_host, role="peers")
-	elif option == 'getlog':
-		for p in peers:
-			execute(getlog, 'peer', p[0], host=p[3])
-
-def setup_peer(job):
-	if job == 'putfile' or job == 'all':
-		put('genfiles/*', config['config_path_base'])
-	if job == 'update' or job == 'all':
-		with cd(config['config_path_base']):
-			run('python control.py update -v ' + config['version'])
-@parallel
-def start_peer():
-	with cd(config['config_path_base']):
-		run('python control.py start')
-
-@parallel
-def check_host():
-	with cd(config['config_path_base']):
-		run('python control.py check')
-
-@parallel
-def end_host():
-	with cd(config['config_path_base']):
-		run('python control.py end -r s')
-
-def getlog(r='sender', n=''):
-	with cd(config['config_path_base']):
-		run('python control.py stat')
-	if r == 'sender':
-		get(config['config_path_base'] + config['log_file'] + 'stat.json', 'getfiles/' + config['log_file'] + 'stat_sender_'+ n + '.json')
-	elif r == 'peer':
-		get(config['config_path_base'] + config['log_file'] + 'stat.json', 'getfiles/' + config['log_file'] + 'stat_peer_' + n + '.json')
+def p(o = 'setup', job = 'all'):
+	if o == 'setup' or o == 'show':
+		getattr(tObj, o)(False, job);
+	else:
+		getattr(tObj, o)(False);
 
 @task
 def setup(t = 'nep2p', cf = 'config.json', d = False, l = False):
-	global p2p_type, config, sender, peers
+	global tObj
+	p2p_type = None
+	config = None
 	# check input
 	print 'Check input...'
 	if t not in P2P_SYS:
@@ -114,9 +39,15 @@ def setup(t = 'nep2p', cf = 'config.json', d = False, l = False):
 	d = d if bool(d) else False;
 	l = l if bool(l) else False;
 
+	# construct a test object
+	if p2p_type == 'nep2p':
+		tObj = Nep2pTest(config)
+	elif p2p_type == 'bt':
+		tObj = BtTest(config)
+
 	# parse configuration
 	print '\nCheck configuration file...'
-	if not check_config(config):
+	if not tObj.check_config():
 		print 'Configuration file is invalid'
 		return
 
@@ -145,6 +76,7 @@ def setup(t = 'nep2p', cf = 'config.json', d = False, l = False):
 		elif res['type'] == 'key' and res['key'] not in keys:
 			keys.append(res['key'])
 		env.roledefs['peers'].append(res['host'])
+
 	# add keys
 	env.key_filename = keys
 	print '\tsender:'
@@ -155,31 +87,7 @@ def setup(t = 'nep2p', cf = 'config.json', d = False, l = False):
 	print '\tkey:'
 	print '\t\t' + str(env.key_filename)
 
-def check_config(config):
-	if p2p_type == 'nep2p' and config['version'] not in NEP2P_VERSIONS:
-		print 'nep2p_version'
-		return False
-	if config['config_path_base'] == '':
-		config['config_path_base'] = NEP2P_PATH_BASE
-	if config['log_file'] == '':
-		config['log_file'] = NEP2P_LOG_PATH
-	if config['file_size'] not in FILE_SIZE:
-		print 'file_size'
-		return False
-	if config['num_init_peer'] <= 0:
-		print 'num_init_peer'
-		return False
-	if config['num_peer'] <= 0:
-		print 'num_peer'
-		return False
-	if len(config['nodes']) <= 1:
-		print 'nodes'
-		return False
-	if config['sender'] == None:
-		config['sender'] = DEFAULT_SENDER
-	elif config['sender'] not in config['nodes'].keys():
-		print 'sender'
-		return False 
-	return True
+	# add sender and peers to the test object
+	tObj.add_hosts(sender, peers)
 
 
