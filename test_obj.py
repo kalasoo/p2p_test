@@ -154,7 +154,8 @@ class Nep2pTest(TObj):
 			execute(self._clean, role="peers")
 	@parallel
 	def _clean(self):
-		pass
+		with cd(self.config['config_path_base']):
+			run('python control.py clean')
 #
 # generate files
 #
