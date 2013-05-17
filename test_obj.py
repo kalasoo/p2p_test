@@ -331,7 +331,8 @@ class BtTest(TObj):
 			execute(self._end, role="peers")
 	@parallel
 	def _end(self):
-		pass
+		with cd(BT_PATH_BASE):
+			run('python btControl.py end')
 #
 # clean_daemon
 #
