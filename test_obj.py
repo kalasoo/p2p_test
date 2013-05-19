@@ -36,6 +36,8 @@ class TObj(object):
 		print 'setup'
 	def start(self, isSnd):
 		print 'start'
+	def end(self, isSnd):
+		print 'end'
 	def getlog(self, isSnd):
 		print 'getlog'
 
