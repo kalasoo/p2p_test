@@ -2,6 +2,18 @@ from json import loads
 from test_obj import *
 
 @task
+def help():
+	print '\nCommand: fab setup [s:o=Option][p:o=Option]'
+	print '##fab setup: is needed for every command'
+	print '\nsetup: setup a testing'
+	print '\tsetup | setup=t,cf'
+	print 's: sender operations'
+	print '\to | o=setup | o=setup,job | o=start | o=check | o=end | o=getlog | o=clean'
+	print 'p: peer operations'
+	print '\to | o=setup | o=setup,job | o=start | o=check | o=end | o=getlog | o=clean'
+
+
+@task
 def s(o = 'setup', job = 'all'):
 	if o == 'setup' or o == 'show':
 		getattr(tObj, o)(True, job);
