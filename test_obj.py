@@ -75,7 +75,9 @@ class Nep2pTest(TObj):
 	def setup_sender(self, job):
 		path = self.config['config_path_base']
 		if job == 'putfile' or job == 'all':
-			put('genfiles/*', path)
+			#put('genfiles/*', path)	#shaun
+			put('genfiles/config.json', path)
+			put('genfiles/nodes.json', path)
 			with cd(path):
 				run('dd if=/dev/urandom of=./{0}.dat bs={1} count=1'
 					.format(self.config['file_size'], self.config['file_size']))
@@ -85,7 +87,8 @@ class Nep2pTest(TObj):
 	def setup_peer(self, job):
 		path = self.config['config_path_base']
 		if job == 'putfile' or job == 'all':
-			put('genfiles/*', path)
+			#put('genfiles/*', path)	#shaun
+			put('genfiles/config.json', path)
 		if job == 'update' or job == 'all':
 			with cd(path):
 				run('python control.py update -v ' + self.config['version'])
@@ -144,6 +147,7 @@ class Nep2pTest(TObj):
 	def _end(self):
 		with cd(self.config['config_path_base']):
 			run('python control.py end -r s')
+			#run('python control.py end')
 #
 # clean
 #
@@ -221,9 +225,9 @@ class BtTest(TObj):
 	def setup_sender(self, job):
 		if job == 'putfile' or job == 'all':
 			put('genfiles/config.json', BT_PATH_BASE)
-			put('genfiles/btControl.py', BT_PATH_BASE)
-			put('genfiles/logger.py', BT_PATH_BASE)
-			put('genfiles/statCollect.py', BT_PATH_BASE)
+			#put('genfiles/btControl.py', BT_PATH_BASE)
+			#put('genfiles/logger.py', BT_PATH_BASE)
+			#put('genfiles/statCollect.py', BT_PATH_BASE)
 		if job == 'genfile' or job == 'all':
 			with cd(BT_PATH_BASE + BT_DOWNLOADS_PATH):
 				run('dd if=/dev/urandom of=./{0}.dat bs={1} count=1'
@@ -240,9 +244,9 @@ class BtTest(TObj):
 	def setup_peer(self, job):
 		if job == 'putfile' or job == 'all':
 			put('genfiles/config.json', BT_PATH_BASE)
-			put('genfiles/btControl.py', BT_PATH_BASE)
-			put('genfiles/logger.py', BT_PATH_BASE)
-			put('genfiles/statCollect.py', BT_PATH_BASE)
+			#put('genfiles/btControl.py', BT_PATH_BASE)
+			#put('genfiles/logger.py', BT_PATH_BASE)
+			#put('genfiles/statCollect.py', BT_PATH_BASE)
 		put('torrents/' + self.torrent_name, BT_PATH_BASE + BT_TORRENTS_PATH)
 
 #

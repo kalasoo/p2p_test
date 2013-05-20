@@ -1,19 +1,21 @@
 {
 	"version": "a16",
 	"config_path_base": "~/fyp/nep2p2_ms3/",
-	"log_file": "May_15_a16_test/",
-	"file_size": "10M",
+	"log_file": "May_20_a16_1M_1/",
+	"file_size": "1M",
 	"num_init_peer": 1,
-	"num_peer": 5,
+	"num_peer": 7,
 	"packet_loss_rate": null,
 	"corruption_rate": null,
-	"sender": "s8",
+	"sender": "s1",
 	"nodes": {
 		"s1": [39951, 3000],
 		"s2": [39951, 3000],
 		"s3": [39951, 3000],
-		"s5": [39951, 3000],
+		"s4": [39951, 3000],
 		"s6": [39951, 3000],
-		"s8": [39951, 3000]
+		"s7": [39951, 3000],
+		"s8": [39951, 3000],
+		"s9": [39951, 3000]
 	}
 }

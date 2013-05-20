@@ -2,7 +2,7 @@ from json import loads
 
 HOST_OPTIONS = ('setup', 'start', 'getlog', 'check', 'end', 'clean')
 P2P_SYS = ('nep2p', 'bt', 'libswft')
-FILE_SIZE = ('1K', '10K', '100K', '1M', '5M', '10M', '20M', '30M', '40M', '50M', '100M')
+FILE_SIZE = ('1K', '10K', '100K', '1M', '5M', '10M', '20M', '30M', '40M', '50M', '100M', '200M', '500M')
 NEP2P_VERSIONS = ('a13', 'a16', 'a16_rudp')
 DEFAULT_SENDER = 's8'
 
